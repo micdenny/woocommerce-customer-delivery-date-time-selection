@@ -4,7 +4,7 @@ jQuery(document).ready(function($) {
         var date = jQuery(this).val();
 
         //Handling delivery time
-        var html_time = '<option value="">Select delivery Time</option>';
+        var html_time = '<option value="">Select ...</option>';
 
         var i = 0;
 

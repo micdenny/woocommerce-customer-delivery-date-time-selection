@@ -4,6 +4,8 @@
 		
 		//getting date format
 		$wcd_settings['date_format'] = $date_format = sanitize_text_field($_POST['date_format']);
+        $wcd_settings['dd_lang'] = $dd_lang = sanitize_text_field($_POST['dd_lang']);
+        $wcd_settings['dt_lang'] = $dt_lang = sanitize_text_field($_POST['dt_lang']);
         update_option('wcd_settings',$wcd_settings);
 
 		// getting selected dates and times
@@ -30,6 +32,17 @@
         $date_f = get_option('wcd_settings');
         if(!empty($date_f)){
             $date_format = $date_f['date_format'];
+            if(empty($date_f['dd_lang'])){
+                $dd_lang = 'Delivery Date';
+            }else{
+                $dd_lang = $date_f['dd_lang'];
+            }
+
+            if(empty($date_f['dt_lang'])){
+                $dt_lang = 'Delivery Time';
+            }else{
+                $dt_lang = $date_f['dt_lang'];
+            }
         }
 
         $options_value = get_option('wcd_date_time');
@@ -66,6 +79,9 @@
 				<option value="Y-m-d" <?php if($date_format=='Y-m-d')echo 'selected';?>>2015-12-31 (year-month-day)</option>
 			</select>
 		</p>
+        <?php    echo "<h3>" . __( 'Language Settings', 'wcd_date_time' ) . "</h3>"; ?>
+        <p>Delivery Date Label : <input type="text" name="dd_lang" value="<?php echo $dd_lang;?>"></p>
+        <p>Delivery Time Label : <input type="text" name="dt_lang" value="<?php echo $dt_lang;?>"></p>
         <hr />
         <?php    echo "<h3>" . __( 'Select your shop delivery date time Schedule ', 'wcd_date_time' ) . "</h3>"; ?>
 			<p>NB: 30 days will be generated from current date</p>

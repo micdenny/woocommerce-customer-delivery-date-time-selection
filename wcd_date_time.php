@@ -4,13 +4,13 @@
 Plugin Name: Woocommerce customer delivery date time selection
 Plugin URI: http://myplugin.tophostbd.com/woocommerce-customer-delivery-date-and-time-selection/
 Description: Customer will be able to select date and time for delivery they expect .
-Author: Md. Muntasir Rahman Rafi
-Version: 1.0
+Author: raficsedu
+Version: 1.1
 Author URI: http://myplugin.tophostbd.com/
 Contributor: Application Village Bangladesh .
 */
 
-$wpefield_version = '1.0';
+$wpefield_version = '1.1';
 
 
 add_action('woocommerce_after_order_notes', 'wcd_custom_checkout_action');
@@ -31,25 +31,30 @@ function wcd_custom_checkout_action( $checkout ) {
 	
 	echo '<div id="my_custom_checkout_field" style="width: 100%; float: left;">';
 
+    //Getting lang from DB
+    $date_f = get_option('wcd_settings');
+    $dd_lang = $date_f['dd_lang'];
+    $dt_lang = $date_f['dt_lang'];
+
     //Custom checkout field for delivery date
     woocommerce_form_field( 'wcd_dd', array(
         'type'          => 'select',
         'class'         => array('wcd_cdd form-row-first country_select'),
         'required' 		=> true,
-        'label'         => __('Delivery Date'),
+        'label'         => $dd_lang,
         'options'     => generate_delivery_date()
-    ), $checkout->get_value( 'wcd_dd' ));
+    ), '');
 
     //Custom checkout field for delivey time
     woocommerce_form_field( 'wcd_dt', array(
         'type'          => 'select',
         'class'         => array('wcd_cdt form-row-last country_select'),
         'required' 		=> true,
-        'label'         => __('Delivery Time'),
+        'label'         => $dt_lang,
         'options'     => array(
-            '' => __('Select Delivery Time', 'woocommerce' )
+            '' => __('Select ...', 'woocommerce' )
         )
-    ), $checkout->get_value( 'wcd_dt' ));
+    ), '');
 
 	echo '</div>';
 }
@@ -63,7 +68,7 @@ function get_date_format(){
 
 function generate_delivery_date(){
     $options_value = get_option('wcd_date_time');
-    $formatted_dd = array(''=>'Select Delivery Date');
+    $formatted_dd = array(''=>'Select ...');
 
     //get settings for date format
     $date_f = get_option('wcd_settings');
@@ -148,11 +153,16 @@ function generate_delivery_time(){
 add_action('woocommerce_checkout_process', 'wcd_my_field_processor');
 
 function wcd_my_field_processor() {
+    //Getting lang from DB
+    $date_f = get_option('wcd_settings');
+    $dd_lang = $date_f['dd_lang'];
+    $dt_lang = $date_f['dt_lang'];
+
     // Check if set, if its not set add an error.
     if ( ! sanitize_text_field($_POST['wcd_dd']) )
-        wc_add_notice( __( 'Delivery Date is a required field.' ), 'error' );
+        wc_add_notice( __( $dd_lang.' is a required field.' ), 'error' );
     if ( ! sanitize_text_field($_POST['wcd_dt']) )
-        wc_add_notice( __( 'Delivery Time is a required field.' ), 'error' );
+        wc_add_notice( __( $dt_lang.' is a required field.' ), 'error' );
 }
 
 // Update order meta to display in order review
@@ -160,11 +170,11 @@ add_action('woocommerce_checkout_update_order_meta', 'wcd_update_order_meta');
 
 function wcd_update_order_meta( $order_id ) {
 	if (sanitize_text_field($_POST['wcd_dd'])) {
-		update_post_meta( $order_id, 'Delivery Date', esc_attr($_POST['wcd_dd']));
+		update_post_meta( $order_id, 'Delivery-Date', esc_attr($_POST['wcd_dd']));
 	}
 
     if (sanitize_text_field($_POST['wcd_dt'])) {
-        update_post_meta( $order_id, 'Delivery Time', esc_attr($_POST['wcd_dt']));
+        update_post_meta( $order_id, 'Delivery-Time', esc_attr($_POST['wcd_dt']));
     }
 }
 
@@ -175,8 +185,13 @@ add_filter('woocommerce_email_order_meta_keys', 'wcd_add_delivery_date_time',10,
 
 function wcd_add_delivery_date_time( $keys )
 {
-    $keys[] = "Delivery Date";
-    $keys[] = "Delivery Time";
+    //Getting lang from DB
+    $date_f = get_option('wcd_settings');
+    $dd_lang = $date_f['dd_lang'];
+    $dt_lang = $date_f['dt_lang'];
+
+    $keys[$dd_lang] = 'Delivery-Date';
+    $keys[$dt_lang] = 'Delivery-Time';
     return $keys;
 }
 /**
@@ -207,7 +222,7 @@ function wcd_custom_column_value($column){
     $data = get_post_meta( $post->ID );
     //if you did the same, follow this code
     if ( $column == 'order_delivery_date' ) {    
-        echo (isset($data['Delivery Date'][0]) ? $data['Delivery Date'][0].'  '.$data['Delivery Time'][0] : '');
+        echo (isset($data['Delivery-Date'][0]) ? $data['Delivery-Date'][0].'  '.$data['Delivery-Time'][0] : '');
     }
 }
 
@@ -237,14 +252,20 @@ add_filter('woocommerce_order_details_after_order_table','wcd_add_delivery_date_
 
 function wcd_add_delivery_date_to_order_page($order)
 {
+    //Getting lang from DB
+    $date_f = get_option('wcd_settings');
+    $dd_lang = $date_f['dd_lang'];
+    $dt_lang = $date_f['dt_lang'];
+
+
 	$my_order_meta = get_post_custom( $order->id );
-	if(array_key_exists('Delivery Date',$my_order_meta))
+	if(array_key_exists('Delivery-Date',$my_order_meta))
 	{
-		$order_page_delivery_date = $my_order_meta['Delivery Date'];
-        $order_page_delivery_time = $my_order_meta['Delivery Time'];
+		$order_page_delivery_date = $my_order_meta['Delivery-Date'];
+        $order_page_delivery_time = $my_order_meta['Delivery-Time'];
 		if ( $order_page_delivery_date != "" )
 		{
-			echo '<p><strong>'.__(('Delivery Date'),'order-delivery-date').':</strong> ' . $order_page_delivery_date[0] .'  '.$order_page_delivery_time[0]. '</p>';
+			echo '<p><strong>'.__(($dd_lang),'order-delivery-date').':</strong> ' . $order_page_delivery_date[0] .'  '.$order_page_delivery_time[0]. '</p>';
 		}
 	}
  }

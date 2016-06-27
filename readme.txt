@@ -1,9 +1,9 @@
 === Woocommerce Customer Delivery Date Time Selection ===
-Contributors: Md. Muntasir Rahman
+Contributors: raficsedu
 Tags: customer delivery date, checkout, order delivery, checkout calendar, woocommerce , delivery date time selection, delvery date
 Requires at least: 1.4
-Tested up to: 4.3
-Stable tag: wcd
+Tested up to: 4.5
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate link: http://myplugin.tophostbd.com/
@@ -19,6 +19,8 @@ The plugin allows the site administrator to select delivery date and time schedu
 The delivery date chosen by the customer will be visible to the site administrator while viewing the order under the "Custom Fields" section.
 
 This plugin allows you to improve your customer service by delivering the order on the customer's specified date.
+
+Any Modification need , Contact : raficsedu@gmail.com
 
 == Installation ==
 
@@ -38,6 +40,10 @@ This plugin allows you to improve your customer service by delivering the order 
 4. Site admin is able to set his shop delivery schedule by checking the date and set time for open to close .
 
 == Changelog ==
+
+= 1.1 =
+* Added admin panel option for changing the front end label
+* You can change that label according to your choice .
 
 = 1.0 =
 * Initial release.
