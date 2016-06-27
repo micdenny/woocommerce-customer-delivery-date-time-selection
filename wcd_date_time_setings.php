@@ -74,6 +74,7 @@
 			<select data-placeholder="" name="date_format" id="df" class="country_select">
 				<option value="">Select Date Format</option>
 				<option value="d-m-Y" <?php if($date_format=='d-m-Y')echo 'selected';?>>31-12-2015 (day-month-year)</option>
+                <option value="l d-m-Y" <?php if($date_format=='l d-m-Y')echo 'selected';?>>Monday 31-12-2015 (day-month-year)</option>
 				<option value="m-d-Y" <?php if($date_format=='m-d-Y')echo 'selected';?>>12-31-2015 (month-day-year)</option>
 				<option value="Y-d-m" <?php if($date_format=='Y-d-m')echo 'selected';?>>2015-31-12 (year-day-month)</option>
 				<option value="Y-m-d" <?php if($date_format=='Y-m-d')echo 'selected';?>>2015-12-31 (year-month-day)</option>
@@ -89,7 +90,7 @@
                 date_default_timezone_set('UTC');
 				for($i = 0;$i < 30; $i++){
 					$date = date("d-m-Y", time() + 86400*$i);
-					$formated_date = date('l jS \of F Y', time() + 86400*$i);
+					$formated_date = date_i18n('l j F Y', time() + 86400*$i);
 
                     //Checking for Saved value
                     if (!empty($revised_date) && array_key_exists($date,$revised_date)){

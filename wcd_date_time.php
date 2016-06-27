@@ -13,7 +13,7 @@ Contributor: Application Village Bangladesh .
 $wpefield_version = '1.1';
 
 
-add_action('woocommerce_after_order_notes', 'wcd_custom_checkout_action');
+add_action('woocommerce_before_order_notes', 'wcd_custom_checkout_action');
 
 function wcd_custom_checkout_action( $checkout ) {
 
@@ -52,7 +52,7 @@ function wcd_custom_checkout_action( $checkout ) {
         'required' 		=> true,
         'label'         => $dt_lang,
         'options'     => array(
-            '' => __('Select ...', 'woocommerce' )
+            '' => __('Seleziona ...', 'woocommerce' )
         )
     ), '');
 
@@ -68,20 +68,22 @@ function get_date_format(){
 
 function generate_delivery_date(){
     $options_value = get_option('wcd_date_time');
-    $formatted_dd = array(''=>'Select ...');
+    $formatted_dd = array(''=>'Seleziona ...');
 
     //get settings for date format
     $date_f = get_option('wcd_settings');
     $date_format = $date_f['date_format'];
+    $default_format = "d-m-Y";
 
     date_default_timezone_set('UTC');
-    $today = date($date_format);
+    $today = date($default_format);
     foreach($options_value as $ov){
         $old_date = trim($ov['date']);
         $old_date_timestamp = strtotime($old_date);
-        $newDate = date($date_format, $old_date_timestamp);
+        $newDate = date($default_format, $old_date_timestamp);
+        $localizedNewDate = date_i18n($date_format, $old_date_timestamp);
         if($newDate>=$today)
-            $formatted_dd[$newDate] = __($newDate, 'woocommerce' );
+            $formatted_dd[$newDate] = __($localizedNewDate, 'woocommerce' );
     }
     return $formatted_dd;
 }
@@ -96,15 +98,16 @@ function generate_delivery_time(){
     //get settings for date format
     $date_f = get_option('wcd_settings');
     $date_format = $date_f['date_format'];
+    $default_format = "d-m-Y";
 
     date_default_timezone_set('UTC');
-    $today = date($date_format);
+    $today = date($default_format);
 
     foreach($options_value as $ov){
 
         $old_date = trim($ov['date']);
         $old_date_timestamp = strtotime($old_date);
-        $newDate = date($date_format, $old_date_timestamp);
+        $newDate = date($default_format, $old_date_timestamp);
 
         if($newDate>=$today){
             $open = $ov['s_time'];
@@ -140,7 +143,7 @@ function generate_delivery_time(){
             $total_min = $hour*60 + $min;
             $loop = $total_min / 15;
             for($l=0 ; $l <= $loop ; $l++){
-                $time = date('h:i a', strtotime($open) + (900*$l));
+                $time = date('H:i', strtotime($open) + (900*$l));
                 $html .= '<option class="'.$newDate.'" value="'.$time.'">'.$time.'</option>';
             }
             $i++;
